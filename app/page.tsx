@@ -130,11 +130,11 @@ export default function Page(){
 
       <section id="estudio" className="taycan-scene" data-scene>
         <div className="taycan-sticky">
-          <div className="taycan-frame"><img src="/img/estudio-taycan.webp" alt="Porsche Taycan no estúdio Pleno Car"/></div>
+          <div className="taycan-frame"><img src="/img/alto-padrao.png" alt="Veículo premium no estúdio Pleno Car"/></div>
           <div className="taycan-number">01</div>
           <p className="taycan-kicker">NO ESTÚDIO / PLENO CAR</p>
-          <h2><span>PORSCHE</span><strong>TAYCAN</strong></h2>
-          <div className="taycan-caption">O carro vira o centro da cena.<br/>O processo fica invisível.</div>
+          <h2><span>ALTO</span><strong>PADRÃO</strong></h2>
+          <div className="taycan-caption">Cada superfície, cada acabamento, cada entrega.<br/>Nada aqui é tratado como serviço comum.</div>
         </div>
       </section>
 
