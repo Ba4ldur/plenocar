@@ -16,10 +16,10 @@ const wa = (msg: string) => `https://wa.me/${SITE.phone}?text=${encodeURICompone
 const WA_DEFAULT = wa('Olá, vim pelo site e gostaria de solicitar um orçamento.')
 
 const SERVICES = [
-  ['01','PPF','Proteção invisível. Impacto mínimo na estética, máximo na preservação.','/img/estudio-mercedes-taycan.webp'],
-  ['02','Ceramic','Brilho profundo, toque liso e proteção de longa duração.','/img/estudio-taycan.webp'],
-  ['03','Black Piano','Personalização precisa para um acabamento mais agressivo e exclusivo.','/img/fachada-vidro.webp'],
-  ['04','Pintura','Correção, recuperação e pintura com processo controlado.','/img/pintura-pistola.webp'],
+  ['01','PPF','Proteção invisível. Impacto mínimo na estética, máximo na preservação.','/img/servicoppf.png'],
+  ['02','Ceramic','Brilho profundo, toque liso e proteção de longa duração.','/img/servicoceramica.png'],
+  ['03','Black Piano','Personalização precisa para um acabamento mais agressivo e exclusivo.','/img/servicoblackpiano.png'],
+  ['04','Pintura','Correção, recuperação e pintura com processo controlado.','/img/servicopintura.png'],
 ] as const
 
 function Brand(){return <a href="#inicio" className="brand" aria-label="Pleno Car"><img src="/img/logo-simbolo.png" alt=""/><span>PLENO CAR</span></a>}
