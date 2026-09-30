@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     description: 'Proteção, personalização e acabamento premium.',
     type: 'website',
     locale: 'pt_BR',
-    images: ['/img/estudio-mercedes-taycan.webp'],
+    images: ['/img/hero.png'],
   },
   icons: { icon: '/img/logo-simbolo.png', apple: '/img/logo-simbolo.png' },
 }
@@ -24,7 +24,7 @@ const schema = {
   '@context': 'https://schema.org',
   '@type': 'AutoRepair',
   name: 'Pleno Car — Estética Automotiva',
-  image: '/img/estudio-mercedes-taycan.webp',
+  image: '/img/hero.png',
   telephone: '+55-86-99966-6046',
   address: {
     '@type': 'PostalAddress',
@@ -46,9 +46,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Saira:wdth,wght@100..125,500..900&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Inter:wght@400;500;600&family=Saira:wdth,wght@100..125,500..900&display=swap"
         />
-        <link rel="preload" as="image" href="/img/estudio-mercedes-taycan.webp" />
+        <link rel="preload" as="image" href="/img/hero.png" />
         {/* Estado inicial das animações só é aplicado com JS e sem reduced-motion */}
         <script
           dangerouslySetInnerHTML={{
