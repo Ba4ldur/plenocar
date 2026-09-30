@@ -26,7 +26,6 @@
 .pc-hero .pc-car{position:absolute;right:3.6vw;bottom:clamp(130px,18vh,195px);font-size:clamp(78px,16.8vw,350px);white-space:nowrap}
 .pc-hero .pc-car-clip{display:block;overflow:hidden;padding:.06em 0}
 .pc-hero .pc-car-clip>span{display:block;color:#ff5b14}
-.pc-hero .pc-car-wipe{position:absolute;left:-.05em;right:-.05em;top:.02em;bottom:-.04em;background:#ff5b14;transform:scaleX(0);transform-origin:left center;pointer-events:none}
 .pc-hero .pc-scroll{position:absolute;z-index:4;right:4.6vw;top:44%;display:flex;flex-direction:column;align-items:center;gap:14px}
 .pc-hero .pc-scroll>span{writing-mode:vertical-rl;font-size:10px;font-weight:700;letter-spacing:.4em}
 .pc-hero .pc-scroll>i{display:block;width:1px;height:64px;background:rgba(245,245,242,.22);overflow:hidden}
@@ -43,9 +42,8 @@
 /* Hide individual elements only once JS is available; static content remains usable without JS. */
 html.js .pc-hero:not(.pc-visible) .pc-aperture-inner{clip-path:inset(50% 0% 50% 0%)}
 html.js .pc-hero:not(.pc-visible) .pc-dark{opacity:.9}
-html.js .pc-hero:not(.pc-visible):not(.pc-intro-complete) .pc-pleno-text{transform:translateY(25%);clip-path:inset(0 0 100% 0)}
+html.js .pc-hero:not(.pc-visible):not(.pc-intro-complete) .pc-pleno-text{clip-path:inset(0 0 100% 0)}
 html.js .pc-hero:not(.pc-visible) .pc-car-clip{clip-path:inset(0 100% 0 0)}
-html.js .pc-hero:not(.pc-visible) .pc-car-wipe{transform:scaleX(0)}
 html.js .pc-hero:not(.pc-visible) .pc-kicker span,html.js .pc-hero:not(.pc-visible) .pc-footer-inner>p>span,html.js .pc-hero:not(.pc-visible) .pc-footer-inner>a>span{transform:translateY(110%)}
 html.js .pc-hero:not(.pc-visible) .pc-footer-rule{transform:scaleX(0)}
 html.js .pc-hero:not(.pc-visible) .pc-scroll{opacity:0}
@@ -53,11 +51,10 @@ html.js .pc-hero.pc-visible .pc-aperture-inner{clip-path:inset(0 0 0 0)!importan
 html.js .pc-hero.pc-visible .pc-dark{opacity:0!important}
 html.js .pc-hero.pc-visible .pc-pleno-text,html.js .pc-hero.pc-visible .pc-kicker span,html.js .pc-hero.pc-visible .pc-footer-inner span{transform:none!important}
 html.js .pc-hero.pc-visible .pc-pleno-text{clip-path:inset(0 0 0 0)!important}
-html.js .pc-hero.pc-intro-complete .pc-pleno-text{clip-path:inset(0 0 0 0)!important;transform:none!important}
 html.js .pc-hero.pc-visible .pc-car-clip{clip-path:inset(0 0 0 0)!important}
 html.js .pc-hero.pc-visible .pc-footer-rule{transform:scaleX(1)!important}
 html.js .pc-hero.pc-visible .pc-scroll{opacity:1!important}
-html.js .pc-hero.pc-visible .pc-ignition,html.js .pc-hero.pc-visible .pc-car-wipe{display:none!important}
+html.js .pc-hero.pc-visible .pc-ignition{display:none!important}
 @media(max-width:800px){
  .hero-cinema.pc-hero{height:170svh}
  .pc-hero .pc-kicker{top:90px;left:5vw;font-size:9px;letter-spacing:.18em}
@@ -73,7 +70,7 @@ html.js .pc-hero.pc-visible .pc-ignition,html.js .pc-hero.pc-visible .pc-car-wip
 @media(prefers-reduced-motion:reduce){
  .hero-cinema.pc-hero{height:100svh}
  .pc-hero .pc-aperture-shell,.pc-hero .pc-aperture-inner,.pc-hero .pc-photo-out,.pc-hero .pc-photo-in{transform:none!important;clip-path:none!important}
- .pc-hero .pc-dark,.pc-hero .pc-ignition,.pc-hero .pc-sweep,.pc-hero .pc-exit-line,.pc-hero .pc-car-wipe{display:none!important}
+ .pc-hero .pc-dark,.pc-hero .pc-ignition,.pc-hero .pc-sweep,.pc-hero .pc-exit-line{display:none!important}
  .pc-hero .pc-pleno-text,.pc-hero .pc-car-clip,.pc-hero .pc-kicker span,.pc-hero .pc-footer-inner span{transform:none!important;clip-path:none!important}
  .pc-hero .pc-scroll{display:none}
 }
