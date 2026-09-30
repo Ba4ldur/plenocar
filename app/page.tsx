@@ -89,7 +89,7 @@ export default function Page(){
     <main>
       <section id="inicio" className="hero-cinema" data-scene>
         <div className="hero-sticky">
-          <div className="hero-photo"><img src="/img/estudio-mercedes-taycan.webp" alt="Estúdio Pleno Car" fetchPriority="high"/></div>
+          <div className="hero-photo"><img src="/img/hero.png" alt="Estúdio automotivo Pleno Car" fetchPriority="high"/></div>
           <div className="hero-shade"/>
           <div className="hero-word hero-word-a">PLENO</div>
           <div className="hero-word hero-word-b">CAR</div>
