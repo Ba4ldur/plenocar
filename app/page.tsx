@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import Lenis from 'lenis'
 import 'lenis/dist/lenis.css'
 import { ArrowRight, ArrowUpRight, Menu, MessageCircle, X } from 'lucide-react'
+import { CinematicHero, startCinematicHero } from './cinematic-hero'
+import './cinematic-hero.css'
 
 const SITE = {
   phone: '5586999666046', phoneDisplay: '(86) 99966-6046',
@@ -29,42 +31,142 @@ export default function Page(){
   const [solid,setSolid]=useState(false)
   const lenisRef=useRef<Lenis|null>(null)
 
-  useEffect(()=>{
-    const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if(reduce) return
-    const lenis=new Lenis({lerp:.075,smoothWheel:true,wheelMultiplier:.9,anchors:{offset:-24},autoRaf:true})
-    lenisRef.current=lenis
-    const scenes=Array.from(document.querySelectorAll<HTMLElement>('[data-scene]'))
-    const horizontals=Array.from(document.querySelectorAll<HTMLElement>('[data-horizontal]'))
-    const update=()=>{
-      const vh=window.innerHeight
-      setSolid(lenis.scroll>80)
-      document.documentElement.style.setProperty('--velocity',String(Math.max(-10,Math.min(10,lenis.velocity))))
-      document.documentElement.style.setProperty('--global-progress',String(lenis.progress))
-      scenes.forEach(el=>{
-        const r=el.getBoundingClientRect(); const travel=Math.max(1,r.height-vh)
-        const p=Math.max(0,Math.min(1,-r.top/travel))
-        el.style.setProperty('--p',p.toFixed(4))
-        el.style.setProperty('--hero-scale',(1+p*.12).toFixed(4))
-        el.style.setProperty('--hero-y',`${(-p*7).toFixed(2)}vh`)
-        el.style.setProperty('--copy-y',`${(-p*36).toFixed(1)}px`)
-        el.style.setProperty('--mask',`${(12-p*12).toFixed(2)}%`)
-        el.style.setProperty('--media-scale',(1.025-p*.025).toFixed(4))
-      })
-      horizontals.forEach(el=>{
-        const r=el.getBoundingClientRect(); const p=Math.max(0,Math.min(1,-r.top/Math.max(1,r.height-vh)))
-        const track=el.querySelector<HTMLElement>('[data-track]')
-        const viewport=el.querySelector<HTMLElement>('.services-sticky')
-        if(track&&viewport){
-          const max=Math.max(0,track.scrollWidth-viewport.clientWidth)
-          track.style.transform=`translate3d(${-p*max}px,0,0)`
+  useEffect(() => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduce) return
+    let cancelled = false
+    let destroy: (() => void) | null = null
+
+    const loadScript = (id: string, src: string) => new Promise<void>((resolve, reject) => {
+      const existing = document.getElementById(id) as HTMLScriptElement | null
+      if (existing?.dataset.loaded === 'yes') { resolve(); return }
+      const script = existing || document.createElement('script')
+      let settled = false
+      const done = (err?: Error) => {
+        if (settled) return
+        settled = true
+        window.clearTimeout(timeout)
+        script.removeEventListener('load', onLoad)
+        script.removeEventListener('error', onError)
+        if (err) reject(err)
+        else { script.dataset.loaded = 'yes'; resolve() }
+      }
+      const onLoad = () => done()
+      const onError = () => done(new Error('Biblioteca de animação não carregou: ' + id))
+      const timeout = window.setTimeout(() => done(new Error('Tempo de carregamento excedido: ' + id)), 8500)
+      script.addEventListener('load', onLoad)
+      script.addEventListener('error', onError)
+      if (!existing) {
+        script.id = id
+        script.src = src
+        script.async = true
+        document.head.appendChild(script)
+      }
+    })
+
+    void (async () => {
+      let g: any = null
+      let ST: any = null
+      try {
+        const w = window as typeof window & { gsap?: any; ScrollTrigger?: any }
+        if (!w.gsap) {
+          await loadScript('pc-gsap', 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js')
         }
+        if (!w.ScrollTrigger) {
+          await loadScript('pc-scrolltrigger', 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js')
+        }
+        g = w.gsap
+        ST = w.ScrollTrigger
+        if (!g || !ST) throw new Error('GSAP indisponível')
+        g.registerPlugin(ST)
+        ST.config({ ignoreMobileResize: true })
+      } catch (err) {
+        console.warn('[Pleno Car] Abertura cinematográfica indisponível; exibindo versão estática.', err)
+      }
+      if (cancelled) return
+      const lenis = new Lenis({
+        lerp: .075, smoothWheel: true, wheelMultiplier: .9,
+        anchors: { offset: -24 }, autoRaf: !g
       })
-    }
-    lenis.on('scroll',update); update()
-    window.addEventListener('resize',update)
-    return()=>{window.removeEventListener('resize',update);lenis.destroy();lenisRef.current=null}
-  },[])
+      lenisRef.current = lenis
+      const scenes = Array.from(document.querySelectorAll<HTMLElement>('[data-scene]'))
+      const horizontals = Array.from(document.querySelectorAll<HTMLElement>('[data-horizontal]'))
+      const update = () => {
+        const vh = window.innerHeight
+        setSolid(lenis.scroll > 80)
+        document.documentElement.style.setProperty('--velocity', String(Math.max(-10, Math.min(10, lenis.velocity))))
+        document.documentElement.style.setProperty('--global-progress', String(lenis.progress))
+        scenes.forEach(el => {
+          const r = el.getBoundingClientRect()
+          const p = Math.max(0, Math.min(1, -r.top / Math.max(1, r.height - vh)))
+          el.style.setProperty('--p', p.toFixed(4))
+          el.style.setProperty('--hero-scale', (1 + p * .12).toFixed(4))
+          el.style.setProperty('--hero-y', String(-p * 7) + 'vh')
+          el.style.setProperty('--copy-y', String(-p * 36) + 'px')
+          el.style.setProperty('--mask', String(12 - p * 12) + '%')
+          el.style.setProperty('--media-scale', (1.025 - p * .025).toFixed(4))
+        })
+        horizontals.forEach(el => {
+          const r = el.getBoundingClientRect()
+          const p = Math.max(0, Math.min(1, -r.top / Math.max(1, r.height - vh)))
+          const track = el.querySelector<HTMLElement>('[data-track]')
+          const viewport = el.querySelector<HTMLElement>('.services-sticky')
+          if (track && viewport) {
+            const max = Math.max(0, track.scrollWidth - viewport.clientWidth)
+            track.style.transform = 'translate3d(' + (-p * max) + 'px,0,0)'
+          }
+        })
+      }
+      lenis.on('scroll', update)
+      update()
+      let cleanHero: (() => void) | null = null
+      let ticker: ((time: number) => void) | null = null
+      if (g && ST) {
+        lenis.on('scroll', ST.update)
+        ticker = (time: number) => lenis.raf(time * 1000)
+        g.ticker.add(ticker)
+        g.ticker.lagSmoothing(0)
+        // The same image already exists in the repository: no duplicate assets.
+        const img = document.querySelector<HTMLImageElement>('.pc-photo')
+        await Promise.race([
+          Promise.all([
+            img?.decode ? img.decode().catch(() => {}) : Promise.resolve(),
+            document.fonts ? document.fonts.ready : Promise.resolve()
+          ]),
+          new Promise<void>(resolve => window.setTimeout(resolve, 2200))
+        ])
+        if (cancelled) {
+          if (ticker) g.ticker.remove(ticker)
+          lenis.destroy()
+          lenisRef.current = null
+          return
+        }
+        try { cleanHero = startCinematicHero(g, ST, lenis) }
+        catch (err) {
+          console.error('[Pleno Car] Erro ao iniciar o hero:', err)
+          document.querySelector('.pc-hero')?.classList.add('pc-visible')
+        }
+      } else {
+        document.querySelector('.pc-hero')?.classList.add('pc-visible')
+      }
+      if (document.querySelector('.menu-panel')) lenis.stop()
+      const resize = () => {
+        update()
+        if (ST) ST.refresh()
+      }
+      window.addEventListener('resize', resize)
+      destroy = () => {
+        window.removeEventListener('resize', resize)
+        if (cleanHero) cleanHero()
+        if (ticker && g) g.ticker.remove(ticker)
+        lenis.destroy()
+        lenisRef.current = null
+      }
+      if (cancelled) destroy()
+    })()
+
+    return () => { cancelled = true; if (destroy) destroy() }
+  }, [])
 
   useEffect(()=>{ if(menu) lenisRef.current?.stop(); else lenisRef.current?.start(); document.body.style.overflow=menu?'hidden':''; return()=>{document.body.style.overflow=''} },[menu])
 
@@ -87,20 +189,7 @@ export default function Page(){
     </div>}
 
     <main>
-      <section id="inicio" className="hero-cinema" data-scene>
-        <div className="hero-sticky">
-          <div className="hero-photo"><img src="/img/hero.png" alt="Estúdio automotivo Pleno Car" fetchPriority="high"/></div>
-          <div className="hero-shade"/>
-          <div className="hero-word hero-word-a">PLENO</div>
-          <div className="hero-word hero-word-b">CAR</div>
-          <div className="hero-kicker">ESTÉTICA AUTOMOTIVA · TERESINA</div>
-          <div className="hero-bottom">
-            <p>Proteção, personalização<br/>e acabamento de alto padrão.</p>
-            <a href={WA_DEFAULT} target="_blank" rel="noopener">ENTRAR NO PADRÃO <ArrowRight/></a>
-          </div>
-          <div className="hero-scroll">SCROLL <i/></div>
-        </div>
-      </section>
+      <CinematicHero budgetUrl={WA_DEFAULT}/>
 
       <section id="sobre" className="manifesto">
         <div className="manifesto-grid">
