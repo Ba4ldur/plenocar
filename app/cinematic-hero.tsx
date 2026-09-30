@@ -35,11 +35,7 @@ export function CinematicHero({ budgetUrl }: { budgetUrl: string }): ReactElemen
         <div className="pc-kicker pc-ui"><span data-pc="eyeI">ESTÉTICA AUTOMOTIVA · TERESINA</span></div>
         <h1 className="pc-title" aria-label="PLENO CAR">
           <span className="pc-pleno" data-pc="plWrap" aria-hidden="true">
-            {Array.from('PLENO').map((letter, i) =>
-              <span className="pc-letter-mask" data-pc="plM" key={i}>
-                <span className="pc-letter" data-pc="plI">{letter}</span>
-              </span>
-            )}
+            <span className="pc-pleno-text" data-pc="plText">PLENO</span>
           </span>
           <span className="pc-car" data-pc="car" aria-hidden="true">
             <span className="pc-car-clip" data-pc="carClip"><span data-pc="carL">CAR</span></span>
@@ -73,12 +69,12 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
   const iTop = q('iTop'), iBot = q('iBot'), iGlow = qa('iGlow')
   const eyeI = q('eyeI'), rule = q('rule'), botI = qa('botI')
   const scrollInd = q('scrollInd'), scrollLine = q('scrollLine')
-  const plWrap = q('plWrap'), plM = qa('plM'), plI = qa('plI')
+  const plWrap = q('plWrap'), plText = q('plText')
   const car = q('car'), carClip = q('carClip'), carBar = q('carBar'), carL = q('carL')
   const sLine = q('sLine'), sLineCore = q('sLineCore'), ui = Array.from(root.querySelectorAll('.pc-ui'))
 
   if ([stage, apS, apI, photoOut, photoIn, dark, dim, sweep, iTop, iBot, eyeI, rule, scrollInd,
-       scrollLine, plWrap, car, carClip, carBar, carL, sLine, sLineCore].some(x => !x)) {
+       scrollLine, plWrap, plText, car, carClip, carBar, carL, sLine, sLineCore].some(x => !x)) {
     root.classList.add('pc-visible')
     return () => {}
   }
@@ -95,7 +91,8 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
     gsap.set(sweep, { xPercent: -120, opacity: 0 })
     gsap.set([iTop, iBot], { top: '50%', scaleX: 0, opacity: 1 })
     gsap.set(iGlow, { opacity: 0 })
-    gsap.set(plI, { yPercent: 118, rotate: 5, transformOrigin: '0% 100%' })
+    gsap.set(plWrap, { opacity: 1, yPercent: 0 })
+    gsap.set(plText, { clipPath: 'inset(0% 0% 100% 0%)', yPercent: 25, transformOrigin: '50% 100%' })
     gsap.set(carClip, { clipPath: 'inset(0% 100% 0% 0%)' })
     gsap.set(carBar, { scaleX: 0, transformOrigin: '0% 50%' })
     gsap.set(carL, { xPercent: -5 })
@@ -119,6 +116,8 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
       intro = gsap.timeline({
         delay: .16,
         onComplete: () => {
+          gsap.set(plText, { clipPath: 'inset(0% 0% 0% 0%)', yPercent: 0 })
+          root.classList.add('pc-intro-complete')
           loopScroll()
           if (!document.querySelector('.menu-panel')) lenis.start()
         }
@@ -139,7 +138,7 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
         .to(iBot, { top: '100%', duration: 1.2, ease: 'expo.inOut' }, 1.95)
         .to([iTop, iBot], { opacity: 0, duration: .5 }, 2.65)
         .to(dark, { opacity: 0, duration: 1.5 }, 1.95)
-        .to(plI, { yPercent: 0, rotate: 0, duration: 1.3, ease: 'expo.out', stagger: .07 }, 2.45)
+        .to(plText, { clipPath: 'inset(0% 0% 0% 0%)', yPercent: 0, duration: 1.25, ease: 'expo.out' }, 2.45)
         .to(carBar, { scaleX: 1, duration: .5, ease: 'expo.inOut' }, 3.3)
         .set(carClip, { clipPath: 'inset(0% 0% 0% 0%)' }, 3.8)
         .set(carBar, { transformOrigin: '100% 50%' }, 3.8)
@@ -153,7 +152,8 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
       gsap.set(apI, { clipPath: 'inset(0% 0% 0% 0%)' })
       gsap.set(photoIn, { scale: 1 })
       gsap.set([iTop, iBot, dark], { opacity: 0 })
-      gsap.set(plI, { yPercent: 0, rotate: 0 })
+      gsap.set(plText, { clipPath: 'inset(0% 0% 0% 0%)', yPercent: 0 })
+      root.classList.add('pc-intro-complete')
       gsap.set(carClip, { clipPath: 'inset(0% 0% 0% 0%)' })
       gsap.set(carL, { xPercent: 0 })
       gsap.set([eyeI, ...botI], { yPercent: 0 })
@@ -168,10 +168,9 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
       scrollTrigger: { trigger: root, start: 'top top', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true }
     })
       .fromTo(photoOut, { scale: 1 }, { scale: 1.06, duration: 1 }, 0)
-      .fromTo(ui, { opacity: 1 }, { opacity: 0, duration: .20 }, .02)
-      .fromTo(plM, { yPercent: 0 }, { yPercent: -150, duration: .32, stagger: .035 }, .02)
-      .fromTo(plWrap, { opacity: 1 }, { opacity: 0, duration: .15 }, .23)
-      .fromTo(car, { xPercent: 0, opacity: 1 }, { xPercent: 30, opacity: 0, duration: .32 }, .12)
+      .fromTo(ui, { opacity: 1 }, { opacity: 0, duration: .23 }, .39)
+      .fromTo(plWrap, { yPercent: 0, opacity: 1 }, { yPercent: -62, opacity: 0, duration: .36 }, .39)
+      .fromTo(car, { xPercent: 0, opacity: 1 }, { xPercent: 26, opacity: 0, duration: .33 }, .46)
       .fromTo(sLine, { opacity: 0 }, { opacity: 1, duration: .04 }, .36)
       .fromTo(dim, { opacity: 0 }, { opacity: .28, duration: .5 }, .36)
       .fromTo(sLine, { top: '0%' }, { top: '100%', duration: .52 }, .40)
@@ -188,6 +187,7 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
     if (scrollLoop) scrollLoop.kill()
     if (intro) intro.kill()
     ctx.revert()
+    root.classList.remove('pc-intro-complete')
     if (!document.querySelector('.menu-panel')) lenis.start()
   }
 }
