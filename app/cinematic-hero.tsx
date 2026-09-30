@@ -85,6 +85,7 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
   let scrollLoop: Motion = null
   let intro: Motion = null
   let exitTimeline: Motion = null
+  let armExitOnScroll: (() => void) | null = null
   let stopIntro = false
   const ctx = gsap.context(() => {
     gsap.set(apI, { clipPath: 'inset(50% 0% 50% 0%)' })
@@ -143,9 +144,9 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
       ScrollTrigger.refresh()
     }
 
-    const armExitOnScroll = () => {
+    armExitOnScroll = () => {
       if (lenis.scroll <= 12) return
-      lenis.off('scroll', armExitOnScroll)
+      if (armExitOnScroll) lenis.off('scroll', armExitOnScroll)
       startScrollExit()
     }
 
@@ -159,7 +160,7 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
           // The opening must end on an identical frame. Do not toggle body
           // overflow or create ScrollTrigger here: both can change layout.
           if (lenis.scroll > 12) startScrollExit()
-          else lenis.on('scroll', armExitOnScroll)
+          else if (armExitOnScroll) lenis.on('scroll', armExitOnScroll)
           loopScroll()
         }
       })
@@ -204,7 +205,7 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
 
   return () => {
     stopIntro = true
-    lenis.off('scroll', armExitOnScroll)
+    if (armExitOnScroll) lenis.off('scroll', armExitOnScroll)
     if (scrollLoop) scrollLoop.kill()
     if (intro) intro.kill()
     if (exitTimeline) {
