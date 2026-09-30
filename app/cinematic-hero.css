@@ -1,3 +1,7 @@
+/* Keep the viewport width unchanged when Lenis temporarily disables scrolling.
+   Otherwise vw-based word sizes shift a few pixels as the scrollbar returns. */
+html:has(.pc-hero){scrollbar-gutter:stable}
+
 /* Pleno Car — Claude Design v2 hero, isolated from existing sections */
 .hero-cinema.pc-hero{height:215svh;position:relative;background:#080a0c;font-family:Archivo,Inter,system-ui,sans-serif}
 .pc-hero,.pc-hero *{box-sizing:border-box}
@@ -20,6 +24,7 @@
 .pc-hero .pc-ignition-bottom .pc-ignition-glow{bottom:0;background:linear-gradient(to top,rgba(255,226,204,.2),transparent)}
 .pc-hero .pc-kicker{position:absolute;z-index:4;left:4vw;top:clamp(105px,16vh,176px);font-weight:650;font-size:11px;letter-spacing:.3em;overflow:hidden}
 .pc-hero .pc-kicker span{display:block}
+.pc-hero.pc-font-fallback .pc-title{font-family:Inter,Arial,sans-serif}
 .pc-hero .pc-title{margin:0;position:absolute;inset:0;z-index:4;pointer-events:none;font-weight:900;line-height:.8;letter-spacing:-.035em}
 .pc-hero .pc-pleno{position:absolute;left:3.6vw;top:clamp(160px,25vh,250px);display:block;font-size:clamp(78px,16.8vw,350px);white-space:nowrap;color:#f5f5f2;opacity:1}
 .pc-hero .pc-pleno-text{display:block;white-space:nowrap;line-height:1;padding:.08em 0;font-weight:900;letter-spacing:-.04em;will-change:transform,clip-path}
