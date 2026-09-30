@@ -94,8 +94,8 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
     gsap.set([iTop, iBot], { top: '50%', scaleX: 0, opacity: 1 })
     gsap.set(iGlow, { opacity: 0 })
     gsap.set(plWrap, { opacity: 1, yPercent: 0 })
-    gsap.set(plText, { clipPath: 'inset(0% 0% 100% 0%)', yPercent: 0 })
-    gsap.set(carClip, { clipPath: 'inset(0% 100% 0% 0%)' })
+    gsap.set(plText, { opacity: 0, yPercent: 0, clearProps: 'clipPath' })
+    gsap.set(carClip, { opacity: 0, clearProps: 'clipPath' })
     gsap.set(carL, { xPercent: 0 })
     gsap.set([eyeI, ...botI], { yPercent: 110 })
     gsap.set(rule, { scaleX: 0 })
@@ -143,19 +143,24 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
       ScrollTrigger.refresh()
     }
 
+    const armExitOnScroll = () => {
+      if (lenis.scroll <= 12) return
+      lenis.off('scroll', armExitOnScroll)
+      startScrollExit()
+    }
+
     // Skip the intro if the visitor restores the page mid-scroll.
     const onTop = window.scrollY < 16
-    if (onTop) lenis.stop()
     if (onTop) {
       intro = gsap.timeline({
         delay: .16,
         onComplete: () => {
           root.classList.add('pc-intro-complete')
-          // Reserve the final layout before restoring wheel scrolling.
-          // The scroll timeline starts only after the opening has settled.
-          startScrollExit()
+          // The opening must end on an identical frame. Do not toggle body
+          // overflow or create ScrollTrigger here: both can change layout.
+          if (lenis.scroll > 12) startScrollExit()
+          else lenis.on('scroll', armExitOnScroll)
           loopScroll()
-          if (!document.querySelector('.menu-panel')) lenis.start()
         }
       })
       intro.to([iTop, iBot], { scaleX: 1, duration: .6, ease: 'expo.out' }, 0)
@@ -174,9 +179,9 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
         .to(iBot, { top: '100%', duration: 1.2, ease: 'expo.inOut' }, 1.95)
         .to([iTop, iBot], { opacity: 0, duration: .5 }, 2.65)
         .to(dark, { opacity: 0, duration: 1.5 }, 1.95)
-        .to(plText, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.25, ease: 'power3.inOut' }, 2.45)
+        .to(plText, { opacity: 1, duration: .85, ease: 'power2.out' }, 2.65)
         // Reveal CAR continuously in its final position, without a one-frame swap.
-        .to(carClip, { clipPath: 'inset(0% 0% 0% 0%)', duration: .95, ease: 'power3.inOut' }, 3.35)
+        .to(carClip, { opacity: 1, duration: .85, ease: 'power2.out' }, 3.55)
         .to(eyeI, { yPercent: 0, duration: .9, ease: 'expo.out' }, 3.2)
         .to(rule, { scaleX: 1, duration: 1.3, ease: 'expo.inOut' }, 3.5)
         .to(botI, { yPercent: 0, duration: .9, ease: 'expo.out', stagger: .08 }, 3.9)
@@ -185,9 +190,9 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
       gsap.set(apI, { clipPath: 'inset(0% 0% 0% 0%)' })
       gsap.set(photoIn, { scale: 1 })
       gsap.set([iTop, iBot, dark], { opacity: 0 })
-      gsap.set(plText, { clipPath: 'inset(0% 0% 0% 0%)' })
+      gsap.set(plText, { opacity: 1, clearProps: 'clipPath' })
       root.classList.add('pc-intro-complete')
-      gsap.set(carClip, { clipPath: 'inset(0% 0% 0% 0%)' })
+      gsap.set(carClip, { opacity: 1, clearProps: 'clipPath' })
       gsap.set(carL, { xPercent: 0 })
       gsap.set([eyeI, ...botI], { yPercent: 0 })
       gsap.set(rule, { scaleX: 1 })
@@ -199,6 +204,7 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
 
   return () => {
     stopIntro = true
+    lenis.off('scroll', armExitOnScroll)
     if (scrollLoop) scrollLoop.kill()
     if (intro) intro.kill()
     if (exitTimeline) {
@@ -207,6 +213,5 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
     }
     ctx.revert()
     root.classList.remove('pc-intro-complete')
-    if (!document.querySelector('.menu-panel')) lenis.start()
   }
 }
