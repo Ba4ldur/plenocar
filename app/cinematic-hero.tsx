@@ -84,6 +84,7 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
   ScrollTrigger.config({ ignoreMobileResize: true })
   let scrollLoop: Motion = null
   let intro: Motion = null
+  let exitTimeline: Motion = null
   let stopIntro = false
   const ctx = gsap.context(() => {
     gsap.set(apI, { clipPath: 'inset(50% 0% 50% 0%)' })
@@ -116,7 +117,7 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
     const startScrollExit = () => {
       if (stopIntro || exitStarted) return
       exitStarted = true
-      gsap.timeline({
+      exitTimeline = gsap.timeline({
         defaults: { ease: 'none' },
         scrollTrigger: {
           trigger: root,
@@ -200,6 +201,10 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
     stopIntro = true
     if (scrollLoop) scrollLoop.kill()
     if (intro) intro.kill()
+    if (exitTimeline) {
+      if (exitTimeline.scrollTrigger) exitTimeline.scrollTrigger.kill()
+      exitTimeline.kill()
+    }
     ctx.revert()
     root.classList.remove('pc-intro-complete')
     if (!document.querySelector('.menu-panel')) lenis.start()
