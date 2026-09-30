@@ -128,13 +128,24 @@ export default function Page(){
         g.ticker.lagSmoothing(0)
         // The same image already exists in the repository: no duplicate assets.
         const img = document.querySelector<HTMLImageElement>('.pc-photo')
-        await Promise.race([
+        // A late font swap changes text metrics during the last animation frame.
+        // Load the exact display weight before showing either word.
+        const fontLoad = document.fonts
+          ? document.fonts.load('900 160px Archivo', 'PLENO CAR')
+              .then(faces => faces.length > 0 && faces.every(face => face.status === 'loaded'))
+              .catch(() => false)
+          : Promise.resolve(false)
+        const fontLoaded = await Promise.race([
           Promise.all([
             img?.decode ? img.decode().catch(() => {}) : Promise.resolve(),
-            document.fonts ? document.fonts.ready : Promise.resolve()
-          ]),
-          new Promise<void>(resolve => window.setTimeout(resolve, 2200))
+            fontLoad
+          ]).then(([, loaded]) => loaded),
+          new Promise<boolean>(resolve => window.setTimeout(() => resolve(false), 4000))
         ])
+        if (!fontLoaded) {
+          // Freeze the already-used site font instead of allowing a late swap.
+          document.querySelector('.pc-hero')?.classList.add('pc-font-fallback')
+        }
         if (cancelled) {
           if (ticker) g.ticker.remove(ticker)
           lenis.destroy()
