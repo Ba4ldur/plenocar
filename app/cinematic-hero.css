@@ -1,0 +1,77 @@
+/* Pleno Car — Claude Design v2 hero, isolated from existing sections */
+.hero-cinema.pc-hero{height:215svh;position:relative;background:#080a0c;font-family:Archivo,Inter,system-ui,sans-serif}
+.pc-hero,.pc-hero *{box-sizing:border-box}
+.pc-hero .pc-stage{position:sticky;top:0;width:100%;height:100svh;overflow:hidden;background:#080a0c;isolation:isolate}
+.pc-hero .pc-aperture-shell,.pc-hero .pc-aperture-inner,.pc-hero .pc-photo-out,.pc-hero .pc-photo-in{position:absolute;inset:0}
+.pc-hero .pc-aperture-shell,.pc-hero .pc-aperture-inner,.pc-hero .pc-photo-out,.pc-hero .pc-photo-in{will-change:transform,clip-path}
+.pc-hero .pc-photo-out,.pc-hero .pc-photo-in{transform-origin:58% 62%}
+.pc-hero .pc-photo{width:100%;height:100%;display:block;object-fit:cover;object-position:62% 60%}
+.pc-hero .pc-dark,.pc-hero .pc-dim{position:absolute;inset:0;background:#080a0c;pointer-events:none}
+.pc-hero .pc-dark{opacity:0}
+.pc-hero .pc-dim{opacity:0}
+.pc-hero .pc-sweep{position:absolute;top:0;bottom:0;left:0;width:34%;pointer-events:none;opacity:0;background:linear-gradient(100deg,transparent,rgba(255,240,228,.24),transparent);mix-blend-mode:screen;will-change:transform}
+.pc-hero .pc-photo-topshade,.pc-hero .pc-photo-bottomshade{position:absolute;left:0;right:0;pointer-events:none}
+.pc-hero .pc-photo-topshade{top:0;height:22%;background:linear-gradient(to bottom,rgba(8,10,12,.55),transparent)}
+.pc-hero .pc-photo-bottomshade{bottom:0;height:36%;background:linear-gradient(to top,rgba(8,10,12,.79),transparent)}
+.pc-hero .pc-ignition{position:absolute;left:0;top:50%;width:100%;height:0;z-index:6;pointer-events:none}
+.pc-hero .pc-ignition-core{position:absolute;left:0;right:0;top:-.5px;height:1px;background:#f5f5f2;box-shadow:0 0 10px 1px rgba(255,255,255,.75),0 0 46px 5px rgba(255,91,20,.45)}
+.pc-hero .pc-ignition-glow{position:absolute;left:0;right:0;height:22vh;opacity:0;mix-blend-mode:screen}
+.pc-hero .pc-ignition-top .pc-ignition-glow{top:0;background:linear-gradient(to bottom,rgba(255,226,204,.2),transparent)}
+.pc-hero .pc-ignition-bottom .pc-ignition-glow{bottom:0;background:linear-gradient(to top,rgba(255,226,204,.2),transparent)}
+.pc-hero .pc-kicker{position:absolute;z-index:4;left:4vw;top:clamp(105px,16vh,176px);font-weight:650;font-size:11px;letter-spacing:.3em;overflow:hidden}
+.pc-hero .pc-kicker span{display:block}
+.pc-hero .pc-title{margin:0;position:absolute;inset:0;z-index:4;pointer-events:none;font-weight:900;line-height:.8;letter-spacing:-.035em}
+.pc-hero .pc-pleno{position:absolute;left:3.6vw;top:clamp(160px,25vh,250px);display:flex;font-size:clamp(78px,16.8vw,350px);white-space:nowrap;color:#f5f5f2}
+.pc-hero .pc-letter-mask{display:block;overflow:hidden;padding:.055em 0}
+.pc-hero .pc-letter{display:block;will-change:transform}
+.pc-hero .pc-car{position:absolute;right:3.6vw;bottom:clamp(130px,18vh,195px);font-size:clamp(78px,16.8vw,350px);white-space:nowrap}
+.pc-hero .pc-car-clip{display:block;overflow:hidden;padding:.06em 0}
+.pc-hero .pc-car-clip>span{display:block;color:#ff5b14}
+.pc-hero .pc-car-wipe{position:absolute;left:-.05em;right:-.05em;top:.02em;bottom:-.04em;background:#ff5b14;transform-origin:left center;pointer-events:none}
+.pc-hero .pc-scroll{position:absolute;z-index:4;right:4.6vw;top:44%;display:flex;flex-direction:column;align-items:center;gap:14px}
+.pc-hero .pc-scroll>span{writing-mode:vertical-rl;font-size:10px;font-weight:700;letter-spacing:.4em}
+.pc-hero .pc-scroll>i{display:block;width:1px;height:64px;background:rgba(245,245,242,.22);overflow:hidden}
+.pc-hero .pc-scroll>i>b{display:block;width:100%;height:100%;background:#f5f5f2;transform-origin:top}
+.pc-hero .pc-footer{position:absolute;z-index:4;left:4vw;right:4vw;bottom:clamp(25px,4vh,40px)}
+.pc-hero .pc-footer-rule{height:1px;background:rgba(245,245,242,.3);transform-origin:left center}
+.pc-hero .pc-footer-inner{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;padding-top:21px}
+.pc-hero .pc-footer-inner p{margin:0;overflow:hidden;font:600 14px/1.5 Inter,sans-serif}
+.pc-hero .pc-footer-inner p>span,.pc-hero .pc-footer-inner a>span{display:block}
+.pc-hero .pc-footer-inner a{overflow:hidden;font:800 12px/1.5 Inter,sans-serif;letter-spacing:.14em;white-space:nowrap}
+.pc-hero .pc-footer-inner a:hover{color:#ff5b14}
+.pc-hero .pc-exit-line{position:absolute;z-index:8;left:0;top:0;width:100%;height:0;pointer-events:none;opacity:0}
+.pc-hero .pc-exit-line>span{position:absolute;left:0;right:0;top:-1px;height:2px;background:#f5f5f2;box-shadow:0 0 12px 1px rgba(255,255,255,.7),0 0 52px 6px rgba(255,91,20,.4)}
+/* Hide individual elements only once JS is available; static content remains usable without JS. */
+html.js .pc-hero:not(.pc-visible) .pc-aperture-inner{clip-path:inset(50% 0% 50% 0%)}
+html.js .pc-hero:not(.pc-visible) .pc-dark{opacity:.9}
+html.js .pc-hero:not(.pc-visible) .pc-letter{transform:translateY(118%)}
+html.js .pc-hero:not(.pc-visible) .pc-car-clip{clip-path:inset(0 100% 0 0)}
+html.js .pc-hero:not(.pc-visible) .pc-car-wipe{transform:scaleX(0)}
+html.js .pc-hero:not(.pc-visible) .pc-kicker span,html.js .pc-hero:not(.pc-visible) .pc-footer-inner>p>span,html.js .pc-hero:not(.pc-visible) .pc-footer-inner>a>span{transform:translateY(110%)}
+html.js .pc-hero:not(.pc-visible) .pc-footer-rule{transform:scaleX(0)}
+html.js .pc-hero:not(.pc-visible) .pc-scroll{opacity:0}
+html.js .pc-hero.pc-visible .pc-aperture-inner{clip-path:inset(0 0 0 0)!important}
+html.js .pc-hero.pc-visible .pc-dark{opacity:0!important}
+html.js .pc-hero.pc-visible .pc-letter,html.js .pc-hero.pc-visible .pc-kicker span,html.js .pc-hero.pc-visible .pc-footer-inner span{transform:none!important}
+html.js .pc-hero.pc-visible .pc-car-clip{clip-path:inset(0 0 0 0)!important}
+html.js .pc-hero.pc-visible .pc-footer-rule{transform:scaleX(1)!important}
+html.js .pc-hero.pc-visible .pc-scroll{opacity:1!important}
+@media(max-width:800px){
+ .hero-cinema.pc-hero{height:170svh}
+ .pc-hero .pc-kicker{top:90px;left:5vw;font-size:9px;letter-spacing:.18em}
+ .pc-hero .pc-photo{object-position:59% 60%}
+ .pc-hero .pc-pleno{left:4vw;top:25vh;font-size:clamp(66px,20vw,148px)}
+ .pc-hero .pc-car{right:5vw;bottom:23vh;font-size:clamp(86px,25vw,170px)}
+ .pc-hero .pc-scroll{display:none}
+ .pc-hero .pc-footer{left:5vw;right:5vw;bottom:30px}
+ .pc-hero .pc-footer-inner{align-items:flex-start;flex-direction:column;gap:16px}
+ .pc-hero .pc-footer-inner p{font-size:12px}
+ .pc-hero .pc-footer-inner a{font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){
+ .hero-cinema.pc-hero{height:100svh}
+ .pc-hero .pc-aperture-shell,.pc-hero .pc-aperture-inner,.pc-hero .pc-photo-out,.pc-hero .pc-photo-in{transform:none!important;clip-path:none!important}
+ .pc-hero .pc-dark,.pc-hero .pc-ignition,.pc-hero .pc-sweep,.pc-hero .pc-exit-line{display:none!important}
+ .pc-hero .pc-letter,.pc-hero .pc-car-clip,.pc-hero .pc-kicker span,.pc-hero .pc-footer-inner span{transform:none!important;clip-path:none!important}
+ .pc-hero .pc-scroll{display:none}
+}
