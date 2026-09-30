@@ -47,7 +47,7 @@ export default function Page(){
         el.style.setProperty('--p',p.toFixed(4))
         el.style.setProperty('--hero-scale',(1+p*.12).toFixed(4))
         el.style.setProperty('--hero-y',`${(-p*7).toFixed(2)}vh`)
-        el.style.setProperty('--copy-y',`${(-p*72).toFixed(1)}px`)
+        el.style.setProperty('--copy-y',`${(-p*36).toFixed(1)}px`)
         el.style.setProperty('--mask',`${(12-p*12).toFixed(2)}%`)
         el.style.setProperty('--media-scale',(1.025-p*.025).toFixed(4))
       })
