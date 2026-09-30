@@ -39,7 +39,6 @@ export function CinematicHero({ budgetUrl }: { budgetUrl: string }): ReactElemen
           </span>
           <span className="pc-car" data-pc="car" aria-hidden="true">
             <span className="pc-car-clip" data-pc="carClip"><span data-pc="carL">CAR</span></span>
-            <span className="pc-car-wipe" data-pc="carBar" />
           </span>
         </h1>
         <div className="pc-scroll pc-ui" data-pc="scrollInd" aria-hidden="true">
@@ -70,11 +69,11 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
   const eyeI = q('eyeI'), rule = q('rule'), botI = qa('botI')
   const scrollInd = q('scrollInd'), scrollLine = q('scrollLine')
   const plWrap = q('plWrap'), plText = q('plText')
-  const car = q('car'), carClip = q('carClip'), carBar = q('carBar'), carL = q('carL')
+  const car = q('car'), carClip = q('carClip'), carL = q('carL')
   const sLine = q('sLine'), sLineCore = q('sLineCore'), ui = Array.from(root.querySelectorAll('.pc-ui'))
 
   if ([stage, apS, apI, photoOut, photoIn, dark, dim, sweep, iTop, iBot, eyeI, rule, scrollInd,
-       scrollLine, plWrap, plText, car, carClip, carBar, carL, sLine, sLineCore].some(x => !x)) {
+       scrollLine, plWrap, plText, car, carClip, carL, sLine, sLineCore].some(x => !x)) {
     root.classList.add('pc-visible')
     return () => {}
   }
@@ -92,10 +91,9 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
     gsap.set([iTop, iBot], { top: '50%', scaleX: 0, opacity: 1 })
     gsap.set(iGlow, { opacity: 0 })
     gsap.set(plWrap, { opacity: 1, yPercent: 0 })
-    gsap.set(plText, { clipPath: 'inset(0% 0% 100% 0%)', yPercent: 25, transformOrigin: '50% 100%' })
+    gsap.set(plText, { clipPath: 'inset(0% 0% 100% 0%)', yPercent: 0 })
     gsap.set(carClip, { clipPath: 'inset(0% 100% 0% 0%)' })
-    gsap.set(carBar, { scaleX: 0, transformOrigin: '0% 50%' })
-    gsap.set(carL, { xPercent: -5 })
+    gsap.set(carL, { xPercent: 0 })
     gsap.set([eyeI, ...botI], { yPercent: 110 })
     gsap.set(rule, { scaleX: 0 })
     gsap.set(scrollInd, { opacity: 0 })
@@ -116,7 +114,6 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
       intro = gsap.timeline({
         delay: .16,
         onComplete: () => {
-          gsap.set(plText, { clipPath: 'inset(0% 0% 0% 0%)', yPercent: 0 })
           root.classList.add('pc-intro-complete')
           loopScroll()
           if (!document.querySelector('.menu-panel')) lenis.start()
@@ -138,12 +135,9 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
         .to(iBot, { top: '100%', duration: 1.2, ease: 'expo.inOut' }, 1.95)
         .to([iTop, iBot], { opacity: 0, duration: .5 }, 2.65)
         .to(dark, { opacity: 0, duration: 1.5 }, 1.95)
-        .to(plText, { clipPath: 'inset(0% 0% 0% 0%)', yPercent: 0, duration: 1.25, ease: 'expo.out' }, 2.45)
-        .to(carBar, { scaleX: 1, duration: .5, ease: 'expo.inOut' }, 3.3)
-        .set(carClip, { clipPath: 'inset(0% 0% 0% 0%)' }, 3.8)
-        .set(carBar, { transformOrigin: '100% 50%' }, 3.8)
-        .to(carBar, { scaleX: 0, duration: .62, ease: 'expo.inOut' }, 3.8)
-        .to(carL, { xPercent: 0, duration: 1.2, ease: 'expo.out' }, 3.8)
+        .to(plText, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.25, ease: 'power3.inOut' }, 2.45)
+        // Reveal CAR continuously in its final position, without a one-frame swap.
+        .to(carClip, { clipPath: 'inset(0% 0% 0% 0%)', duration: .95, ease: 'power3.inOut' }, 3.35)
         .to(eyeI, { yPercent: 0, duration: .9, ease: 'expo.out' }, 3.2)
         .to(rule, { scaleX: 1, duration: 1.3, ease: 'expo.inOut' }, 3.5)
         .to(botI, { yPercent: 0, duration: .9, ease: 'expo.out', stagger: .08 }, 3.9)
@@ -152,7 +146,7 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
       gsap.set(apI, { clipPath: 'inset(0% 0% 0% 0%)' })
       gsap.set(photoIn, { scale: 1 })
       gsap.set([iTop, iBot, dark], { opacity: 0 })
-      gsap.set(plText, { clipPath: 'inset(0% 0% 0% 0%)', yPercent: 0 })
+      gsap.set(plText, { clipPath: 'inset(0% 0% 0% 0%)' })
       root.classList.add('pc-intro-complete')
       gsap.set(carClip, { clipPath: 'inset(0% 0% 0% 0%)' })
       gsap.set(carL, { xPercent: 0 })
