@@ -1,0 +1,193 @@
+'use client'
+
+import type { ReactElement } from 'react'
+import type Lenis from 'lenis'
+
+type Motion = any
+type Select = (key: string) => HTMLElement | null
+
+/** Claude Design v2, adapted to the existing Pleno Car navbar, Lenis and real next section. */
+export function CinematicHero({ budgetUrl }: { budgetUrl: string }): ReactElement {
+  return (
+    <section id="inicio" className="hero-cinema pc-hero">
+      <div className="pc-stage" data-pc="stage">
+        <div className="pc-aperture-shell" data-pc="apS">
+          <div className="pc-aperture-inner" data-pc="apI">
+            <div className="pc-photo-out" data-pc="photoOut">
+              <div className="pc-photo-in" data-pc="photoIn">
+                <img src="/img/hero.png" alt="Carro esportivo em estúdio de estética automotiva" fetchPriority="high" className="pc-photo" />
+              </div>
+            </div>
+            <div className="pc-dark" data-pc="dark" />
+            <div className="pc-sweep" data-pc="sweep" />
+            <div className="pc-photo-topshade" />
+            <div className="pc-photo-bottomshade" />
+            <div className="pc-dim" data-pc="dim" />
+          </div>
+        </div>
+        <div className="pc-ignition pc-ignition-top" data-pc="iTop">
+          <span className="pc-ignition-core" /><span className="pc-ignition-glow" data-pc="iGlow" />
+        </div>
+        <div className="pc-ignition pc-ignition-bottom" data-pc="iBot">
+          <span className="pc-ignition-core" /><span className="pc-ignition-glow" data-pc="iGlow" />
+        </div>
+
+        <div className="pc-kicker pc-ui"><span data-pc="eyeI">ESTÉTICA AUTOMOTIVA · TERESINA</span></div>
+        <h1 className="pc-title" aria-label="PLENO CAR">
+          <span className="pc-pleno" data-pc="plWrap" aria-hidden="true">
+            {Array.from('PLENO').map((letter, i) =>
+              <span className="pc-letter-mask" data-pc="plM" key={i}>
+                <span className="pc-letter" data-pc="plI">{letter}</span>
+              </span>
+            )}
+          </span>
+          <span className="pc-car" data-pc="car" aria-hidden="true">
+            <span className="pc-car-clip" data-pc="carClip"><span data-pc="carL">CAR</span></span>
+            <span className="pc-car-wipe" data-pc="carBar" />
+          </span>
+        </h1>
+        <div className="pc-scroll pc-ui" data-pc="scrollInd" aria-hidden="true">
+          <span>SCROLL</span><i><b data-pc="scrollLine" /></i>
+        </div>
+        <div className="pc-footer pc-ui">
+          <div className="pc-footer-rule" data-pc="rule" />
+          <div className="pc-footer-inner">
+            <p><span data-pc="botI">Proteção, personalização<br />e acabamento de alto padrão.</span></p>
+            <a href={budgetUrl} target="_blank" rel="noopener noreferrer"><span data-pc="botI">ENTRAR NO PADRÃO&nbsp; ↗</span></a>
+          </div>
+        </div>
+        <div className="pc-exit-line" data-pc="sLine"><span data-pc="sLineCore" /></div>
+      </div>
+    </section>
+  )
+}
+
+export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: Lenis): () => void {
+  const root = document.querySelector<HTMLElement>('.pc-hero')
+  if (!root) return () => {}
+  const q: Select = (key) => root.querySelector<HTMLElement>('[data-pc="' + key + '"]')
+  const qa = (key: string) => Array.from(root.querySelectorAll<HTMLElement>('[data-pc="' + key + '"]'))
+  const stage = q('stage')
+  const apS = q('apS'), apI = q('apI'), photoOut = q('photoOut'), photoIn = q('photoIn')
+  const dark = q('dark'), dim = q('dim'), sweep = q('sweep')
+  const iTop = q('iTop'), iBot = q('iBot'), iGlow = qa('iGlow')
+  const eyeI = q('eyeI'), rule = q('rule'), botI = qa('botI')
+  const scrollInd = q('scrollInd'), scrollLine = q('scrollLine')
+  const plWrap = q('plWrap'), plM = qa('plM'), plI = qa('plI')
+  const car = q('car'), carClip = q('carClip'), carBar = q('carBar'), carL = q('carL')
+  const sLine = q('sLine'), sLineCore = q('sLineCore'), ui = Array.from(root.querySelectorAll('.pc-ui'))
+
+  if ([stage, apS, apI, photoOut, photoIn, dark, dim, sweep, iTop, iBot, eyeI, rule, scrollInd,
+       scrollLine, plWrap, car, carClip, carBar, carL, sLine, sLineCore].some(x => !x)) {
+    root.classList.add('pc-visible')
+    return () => {}
+  }
+
+  gsap.registerPlugin(ScrollTrigger)
+  ScrollTrigger.config({ ignoreMobileResize: true })
+  let scrollLoop: Motion = null
+  let intro: Motion = null
+  let stopIntro = false
+  const ctx = gsap.context(() => {
+    gsap.set(apI, { clipPath: 'inset(50% 0% 50% 0%)' })
+    gsap.set(photoIn, { scale: 1.10, transformOrigin: '58% 62%' })
+    gsap.set(dark, { opacity: .9 })
+    gsap.set(sweep, { xPercent: -120, opacity: 0 })
+    gsap.set([iTop, iBot], { top: '50%', scaleX: 0, opacity: 1 })
+    gsap.set(iGlow, { opacity: 0 })
+    gsap.set(plI, { yPercent: 118, rotate: 5, transformOrigin: '0% 100%' })
+    gsap.set(carClip, { clipPath: 'inset(0% 100% 0% 0%)' })
+    gsap.set(carBar, { scaleX: 0, transformOrigin: '0% 50%' })
+    gsap.set(carL, { xPercent: -5 })
+    gsap.set([eyeI, ...botI], { yPercent: 110 })
+    gsap.set(rule, { scaleX: 0 })
+    gsap.set(scrollInd, { opacity: 0 })
+    gsap.set(sLine, { opacity: 0 })
+
+    const loopScroll = () => {
+      if (stopIntro || !scrollLine) return
+      scrollLoop = gsap.timeline({ repeat: -1, repeatDelay: .3 })
+        .fromTo(scrollLine, { scaleY: 0, transformOrigin: '50% 0%' }, { scaleY: 1, duration: .9, ease: 'expo.inOut' })
+        .set(scrollLine, { transformOrigin: '50% 100%' })
+        .to(scrollLine, { scaleY: 0, duration: .9, ease: 'expo.inOut' })
+    }
+
+    // Skip the intro if the visitor restores the page mid-scroll.
+    const onTop = window.scrollY < 16
+    if (onTop) lenis.stop()
+    if (onTop) {
+      intro = gsap.timeline({
+        delay: .16,
+        onComplete: () => {
+          loopScroll()
+          if (!document.querySelector('.menu-panel')) lenis.start()
+        }
+      })
+      intro.to([iTop, iBot], { scaleX: 1, duration: .6, ease: 'expo.out' }, 0)
+        .to([iTop, iBot], { opacity: .2, duration: .045, repeat: 3, yoyo: true }, .55)
+        .to(iGlow, { opacity: 1, duration: .5 }, .9)
+        .to(apI, { clipPath: 'inset(33% 0% 33% 0%)', duration: .9, ease: 'expo.inOut' }, .9)
+        .to(iTop, { top: '33%', duration: .9, ease: 'expo.inOut' }, .9)
+        .to(iBot, { top: '67%', duration: .9, ease: 'expo.inOut' }, .9)
+        .to(dark, { opacity: .5, duration: .9 }, .9)
+        .to(photoIn, { scale: 1, duration: 3.4, ease: 'power3.out' }, .9)
+        .to(sweep, { opacity: 1, duration: .3 }, 1.3)
+        .to(sweep, { xPercent: 300, duration: 1.8, ease: 'power2.inOut' }, 1.3)
+        .to(sweep, { opacity: 0, duration: .4 }, 2.7)
+        .to(apI, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.2, ease: 'expo.inOut' }, 1.95)
+        .to(iTop, { top: '0%', duration: 1.2, ease: 'expo.inOut' }, 1.95)
+        .to(iBot, { top: '100%', duration: 1.2, ease: 'expo.inOut' }, 1.95)
+        .to([iTop, iBot], { opacity: 0, duration: .5 }, 2.65)
+        .to(dark, { opacity: 0, duration: 1.5 }, 1.95)
+        .to(plI, { yPercent: 0, rotate: 0, duration: 1.3, ease: 'expo.out', stagger: .07 }, 2.45)
+        .to(carBar, { scaleX: 1, duration: .5, ease: 'expo.inOut' }, 3.3)
+        .set(carClip, { clipPath: 'inset(0% 0% 0% 0%)' }, 3.8)
+        .set(carBar, { transformOrigin: '100% 50%' }, 3.8)
+        .to(carBar, { scaleX: 0, duration: .62, ease: 'expo.inOut' }, 3.8)
+        .to(carL, { xPercent: 0, duration: 1.2, ease: 'expo.out' }, 3.8)
+        .to(eyeI, { yPercent: 0, duration: .9, ease: 'expo.out' }, 3.2)
+        .to(rule, { scaleX: 1, duration: 1.3, ease: 'expo.inOut' }, 3.5)
+        .to(botI, { yPercent: 0, duration: .9, ease: 'expo.out', stagger: .08 }, 3.9)
+        .to(scrollInd, { opacity: 1, duration: .6 }, 4.2)
+    } else {
+      gsap.set(apI, { clipPath: 'inset(0% 0% 0% 0%)' })
+      gsap.set(photoIn, { scale: 1 })
+      gsap.set([iTop, iBot, dark], { opacity: 0 })
+      gsap.set(plI, { yPercent: 0, rotate: 0 })
+      gsap.set(carClip, { clipPath: 'inset(0% 0% 0% 0%)' })
+      gsap.set(carL, { xPercent: 0 })
+      gsap.set([eyeI, ...botI], { yPercent: 0 })
+      gsap.set(rule, { scaleX: 1 })
+      gsap.set(scrollInd, { opacity: 1 })
+    }
+
+    // Scroll exit is connected to the real manifesto below the hero:
+    // photo wipes up and reveals the same cream background as the next section.
+    gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: { trigger: root, start: 'top top', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true }
+    })
+      .fromTo(photoOut, { scale: 1 }, { scale: 1.06, duration: 1 }, 0)
+      .fromTo(ui, { opacity: 1 }, { opacity: 0, duration: .20 }, .02)
+      .fromTo(plM, { yPercent: 0 }, { yPercent: -150, duration: .32, stagger: .035 }, .02)
+      .fromTo(plWrap, { opacity: 1 }, { opacity: 0, duration: .15 }, .23)
+      .fromTo(car, { xPercent: 0, opacity: 1 }, { xPercent: 30, opacity: 0, duration: .32 }, .12)
+      .fromTo(sLine, { opacity: 0 }, { opacity: 1, duration: .04 }, .36)
+      .fromTo(dim, { opacity: 0 }, { opacity: .28, duration: .5 }, .36)
+      .fromTo(sLine, { top: '0%' }, { top: '100%', duration: .52 }, .40)
+      .fromTo(apS, { clipPath: 'inset(0% 0% 0% 0%)' }, { clipPath: 'inset(100% 0% 0% 0%)', duration: .52 }, .40)
+      .fromTo(stage, { backgroundColor: '#080A0C' }, { backgroundColor: '#ece9e2', duration: .53 }, .40)
+      .fromTo(sLineCore, { backgroundColor: '#f5f5f2' }, { backgroundColor: '#ff5b14', duration: .1 }, .8)
+      .fromTo(sLine, { scaleX: 1 }, { scaleX: 0, duration: .1 }, .91)
+      .to(sLine, { opacity: 0, duration: .03 }, 1)
+  }, root)
+
+  ScrollTrigger.refresh()
+  return () => {
+    stopIntro = true
+    if (scrollLoop) scrollLoop.kill()
+    if (intro) intro.kill()
+    ctx.revert()
+    if (!document.querySelector('.menu-panel')) lenis.start()
+  }
+}
