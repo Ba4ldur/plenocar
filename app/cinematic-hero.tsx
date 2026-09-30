@@ -71,9 +71,11 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
   const plWrap = q('plWrap'), plText = q('plText')
   const car = q('car'), carClip = q('carClip'), carL = q('carL')
   const sLine = q('sLine'), sLineCore = q('sLineCore'), ui = Array.from(root.querySelectorAll('.pc-ui'))
+  // The intro owns each word. Only the outer title layer belongs to the scroll exit.
+  const titleLayer = root.querySelector<HTMLElement>('.pc-title')
 
   if ([stage, apS, apI, photoOut, photoIn, dark, dim, sweep, iTop, iBot, eyeI, rule, scrollInd,
-       scrollLine, plWrap, plText, car, carClip, carL, sLine, sLineCore].some(x => !x)) {
+       scrollLine, plWrap, plText, car, carClip, carL, sLine, sLineCore, titleLayer].some(x => !x)) {
     root.classList.add('pc-visible')
     return () => {}
   }
@@ -107,6 +109,39 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
         .to(scrollLine, { scaleY: 0, duration: .9, ease: 'expo.inOut' })
     }
 
+    // Defer ScrollTrigger creation until the automatic reveal has COMPLETELY
+    // finished. Both timelines previously initialized against the same words
+    // and the initial ScrollTrigger render could snap the last intro frame.
+    let exitStarted = false
+    const startScrollExit = () => {
+      if (stopIntro || exitStarted) return
+      exitStarted = true
+      gsap.timeline({
+        defaults: { ease: 'none' },
+        scrollTrigger: {
+          trigger: root,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: true,
+          invalidateOnRefresh: true
+        }
+      })
+        .fromTo(photoOut, { scale: 1 }, { scale: 1.06, duration: 1 }, 0)
+        .fromTo(ui, { opacity: 1 }, { opacity: 0, duration: .23 }, .43)
+        // Fade the parent rather than repositioning PLENO and CAR individually.
+        // Their size and coordinates must not change at the intro/scroll handoff.
+        .fromTo(titleLayer, { opacity: 1 }, { opacity: 0, duration: .24 }, .48)
+        .fromTo(sLine, { opacity: 0 }, { opacity: 1, duration: .04 }, .40)
+        .fromTo(dim, { opacity: 0 }, { opacity: .28, duration: .5 }, .40)
+        .fromTo(sLine, { top: '0%' }, { top: '100%', duration: .52 }, .43)
+        .fromTo(apS, { clipPath: 'inset(0% 0% 0% 0%)' }, { clipPath: 'inset(100% 0% 0% 0%)', duration: .52 }, .43)
+        .fromTo(stage, { backgroundColor: '#080A0C' }, { backgroundColor: '#ece9e2', duration: .53 }, .43)
+        .fromTo(sLineCore, { backgroundColor: '#f5f5f2' }, { backgroundColor: '#ff5b14', duration: .1 }, .8)
+        .fromTo(sLine, { scaleX: 1 }, { scaleX: 0, duration: .1 }, .91)
+        .to(sLine, { opacity: 0, duration: .03 }, 1)
+      ScrollTrigger.refresh()
+    }
+
     // Skip the intro if the visitor restores the page mid-scroll.
     const onTop = window.scrollY < 16
     if (onTop) lenis.stop()
@@ -115,6 +150,9 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
         delay: .16,
         onComplete: () => {
           root.classList.add('pc-intro-complete')
+          // Reserve the final layout before restoring wheel scrolling.
+          // The scroll timeline starts only after the opening has settled.
+          startScrollExit()
           loopScroll()
           if (!document.querySelector('.menu-panel')) lenis.start()
         }
@@ -153,29 +191,11 @@ export function startCinematicHero(gsap: Motion, ScrollTrigger: Motion, lenis: L
       gsap.set([eyeI, ...botI], { yPercent: 0 })
       gsap.set(rule, { scaleX: 1 })
       gsap.set(scrollInd, { opacity: 1 })
+      startScrollExit()
     }
 
-    // Scroll exit is connected to the real manifesto below the hero:
-    // photo wipes up and reveals the same cream background as the next section.
-    gsap.timeline({
-      defaults: { ease: 'none' },
-      scrollTrigger: { trigger: root, start: 'top top', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true }
-    })
-      .fromTo(photoOut, { scale: 1 }, { scale: 1.06, duration: 1 }, 0)
-      .fromTo(ui, { opacity: 1 }, { opacity: 0, duration: .23 }, .39)
-      .fromTo(plWrap, { yPercent: 0, opacity: 1 }, { yPercent: -62, opacity: 0, duration: .36 }, .39)
-      .fromTo(car, { xPercent: 0, opacity: 1 }, { xPercent: 26, opacity: 0, duration: .33 }, .46)
-      .fromTo(sLine, { opacity: 0 }, { opacity: 1, duration: .04 }, .36)
-      .fromTo(dim, { opacity: 0 }, { opacity: .28, duration: .5 }, .36)
-      .fromTo(sLine, { top: '0%' }, { top: '100%', duration: .52 }, .40)
-      .fromTo(apS, { clipPath: 'inset(0% 0% 0% 0%)' }, { clipPath: 'inset(100% 0% 0% 0%)', duration: .52 }, .40)
-      .fromTo(stage, { backgroundColor: '#080A0C' }, { backgroundColor: '#ece9e2', duration: .53 }, .40)
-      .fromTo(sLineCore, { backgroundColor: '#f5f5f2' }, { backgroundColor: '#ff5b14', duration: .1 }, .8)
-      .fromTo(sLine, { scaleX: 1 }, { scaleX: 0, duration: .1 }, .91)
-      .to(sLine, { opacity: 0, duration: .03 }, 1)
   }, root)
 
-  ScrollTrigger.refresh()
   return () => {
     stopIntro = true
     if (scrollLoop) scrollLoop.kill()
