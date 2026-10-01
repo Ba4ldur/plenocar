@@ -6,6 +6,8 @@ import 'lenis/dist/lenis.css'
 import { ArrowRight, ArrowUpRight, Menu, MessageCircle, X } from 'lucide-react'
 import { CinematicHero, startCinematicHero } from './cinematic-hero'
 import './cinematic-hero.css'
+import { InspectionScanSection, startInspectionScan } from './inspection-scan'
+import './inspection-scan.css'
 
 const SITE = {
   phone: '5586999666046', phoneDisplay: '(86) 99966-6046',
@@ -120,6 +122,7 @@ export default function Page(){
       lenis.on('scroll', update)
       update()
       let cleanHero: (() => void) | null = null
+      let cleanInspection: (() => void) | null = null
       let ticker: ((time: number) => void) | null = null
       if (g && ST) {
         lenis.on('scroll', ST.update)
@@ -157,6 +160,10 @@ export default function Page(){
           console.error('[Pleno Car] Erro ao iniciar o hero:', err)
           document.querySelector('.pc-hero')?.classList.add('pc-visible')
         }
+        try { cleanInspection = startInspectionScan(g, ST, lenis) }
+        catch (err) {
+          console.error('[Pleno Car] Erro ao iniciar Inspection Scan:', err)
+        }
       } else {
         document.querySelector('.pc-hero')?.classList.add('pc-visible')
       }
@@ -168,6 +175,7 @@ export default function Page(){
       window.addEventListener('resize', resize)
       destroy = () => {
         window.removeEventListener('resize', resize)
+        if (cleanInspection) cleanInspection()
         if (cleanHero) cleanHero()
         if (ticker && g) g.ticker.remove(ticker)
         lenis.destroy()
@@ -228,15 +236,7 @@ export default function Page(){
         </div>
       </section>
 
-      <section id="estudio" className="taycan-scene" data-scene>
-        <div className="taycan-sticky">
-          <div className="taycan-frame"><img src="/img/alto-padrao.png" alt="Veículo premium no estúdio Pleno Car"/></div>
-          <div className="taycan-number">01</div>
-          <p className="taycan-kicker">NO ESTÚDIO / PLENO CAR</p>
-          <h2><span>ALTO</span><strong>PADRÃO</strong></h2>
-          <div className="taycan-caption">Cada superfície, cada acabamento, cada entrega.<br/>Nada aqui é tratado como serviço comum.</div>
-        </div>
-      </section>
+      <InspectionScanSection/>
 
       <section className="studio-gallery">
         <div className="gallery-title"><p className="eyebrow">A UNIDADE</p><h2>Um estúdio<br/>que parece <em>estúdio.</em></h2></div>
