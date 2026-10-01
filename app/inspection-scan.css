@@ -1,0 +1,104 @@
+/* Pleno Car — Alto Padrão / Inspection Scan */
+.inspection-scan{
+  position:relative;
+  height:100vh;
+  margin-top:-10vh;
+  z-index:2;
+  overflow:hidden;
+  background:#0b0b0c;
+  color:#ecebe7;
+  font-family:Archivo,Inter,sans-serif;
+}
+.inspection-frame{position:absolute;inset:0;overflow:hidden;background:#0b0b0c;will-change:clip-path}
+.inspection-wrap{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:max(100vw,calc(100vh * 2.4005));
+  height:max(41.66vw,100vh);
+  margin-left:calc(max(100vw,calc(100vh * 2.4005)) / -2);
+  margin-top:calc(max(41.66vw,100vh) / -2);
+  transform-origin:62% 58%;
+  will-change:transform;
+}
+.inspection-img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover}
+.inspection-highlight{
+  filter:brightness(1.42) contrast(1.22) saturate(1.04);
+  -webkit-mask-image:linear-gradient(90deg,transparent,transparent);
+  mask-image:linear-gradient(90deg,transparent,transparent);
+  pointer-events:none;
+}
+.inspection-micro{position:absolute;transform:translate(-50%,-50%);opacity:0;mix-blend-mode:screen;pointer-events:none}
+.inspection-micro-1{left:53.5%;top:73%;width:14%;height:34%;background:radial-gradient(closest-side,rgba(255,250,242,.55),rgba(255,250,242,.12) 55%,transparent)}
+.inspection-micro-2{left:42%;top:50%;width:22%;height:22%;background:radial-gradient(closest-side,rgba(255,252,246,.42),rgba(255,252,246,.1) 60%,transparent)}
+.inspection-micro-3{left:66%;top:49.5%;width:14%;height:9%;background:radial-gradient(closest-side,rgba(255,92,74,.75),rgba(255,60,50,.18) 60%,transparent)}
+.inspection-shade{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    linear-gradient(90deg,rgba(11,11,12,.7) 0%,rgba(11,11,12,.28) 26%,transparent 46%),
+    linear-gradient(to top,rgba(11,11,12,.75) 0%,transparent 24%);
+}
+.inspection-band,.inspection-veil{
+  position:absolute;top:0;bottom:0;left:0;width:15vw;
+  transform:translateX(-200%);pointer-events:none;will-change:transform;
+}
+.inspection-band{
+  mix-blend-mode:soft-light;
+  background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.18) 22%,rgba(255,255,255,.55) 50%,rgba(255,255,255,.18) 78%,transparent 100%);
+}
+.inspection-veil{
+  mix-blend-mode:screen;opacity:.07;
+  background:linear-gradient(90deg,transparent 0%,#fff 50%,transparent 100%);
+}
+.inspection-title{
+  position:absolute;left:5vw;top:50%;transform:translateY(-56%);z-index:2;
+  display:flex;flex-direction:column;gap:.9vw;pointer-events:none;
+  will-change:opacity,filter;
+}
+.inspection-alto{
+  font-family:Archivo,sans-serif;font-weight:600;font-stretch:125%;
+  font-size:clamp(20px,2.1vw,40px);letter-spacing:.40em;opacity:.35;
+  color:#f2f1ed;line-height:1;padding-left:.06em;text-transform:uppercase;
+}
+.inspection-padrao-wrap{position:relative;line-height:.84}
+.inspection-padrao{
+  display:block;font-family:Archivo,sans-serif;font-weight:800;font-stretch:100%;
+  font-size:clamp(80px,13.5vw,300px);letter-spacing:-.005em;
+  white-space:nowrap;text-transform:uppercase;
+}
+.inspection-padrao-stroke{
+  color:transparent;
+  --scan-stroke-alpha:.32;
+  -webkit-text-stroke:1.4px rgba(255,255,255,var(--scan-stroke-alpha));
+}
+.inspection-padrao-fill{
+  position:absolute;left:0;top:0;color:#fbfaf7;
+  -webkit-mask-image:linear-gradient(90deg,transparent,transparent);
+  mask-image:linear-gradient(90deg,transparent,transparent);
+  pointer-events:none;
+}
+.inspection-body{
+  position:absolute;left:5vw;bottom:8vh;z-index:2;
+  font-size:clamp(14px,1vw,17px);line-height:1.6;color:#ecebe7;
+  opacity:.5;max-width:42ch;display:flex;flex-direction:column;gap:2px;
+}
+@media(max-width:767px){
+  .inspection-scan{height:100svh;margin-top:-6vh}
+  .inspection-wrap{
+    left:-52vw;top:50%;margin-left:0;margin-top:-36.5vw;
+    width:175vw;height:73vw;transform-origin:57% 60%;
+  }
+  .inspection-shade{
+    background:linear-gradient(to bottom,#0b0b0c 0%,rgba(11,11,12,.5) 26%,transparent 34%,transparent 66%,rgba(11,11,12,.6) 74%,#0b0b0c 100%);
+  }
+  .inspection-band,.inspection-veil{width:34vw}
+  .inspection-title{left:5vw;right:5vw;top:12svh;transform:none;gap:2vw}
+  .inspection-alto{font-size:6vw}
+  .inspection-padrao{font-size:19vw}
+  .inspection-padrao-stroke{-webkit-text-stroke:1px rgba(255,255,255,var(--scan-stroke-alpha))}
+  .inspection-body{left:5vw;right:5vw;bottom:9svh;font-size:14px;line-height:1.55;max-width:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .inspection-frame{clip-path:none!important}
+  .inspection-title{opacity:1!important;filter:none!important}
+}
