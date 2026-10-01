@@ -22,6 +22,7 @@ export function InspectionScanSection(): ReactElement {
         <div className="inspection-shade" />
         <div className="inspection-band" data-scan="band" />
         <div className="inspection-veil" data-scan="veil" />
+        <div className="inspection-core" data-scan="core" />
       </div>
 
       <div className="inspection-title" data-scan="title">
@@ -54,13 +55,14 @@ export function startInspectionScan(gsap: Motion, ScrollTrigger: Motion, lenis: 
   const m3 = q('m3')
   const band = q('band')
   const veil = q('veil')
+  const core = q('core')
   const title = q('title')
   const alto = q('alto')
   const stroke = q('stroke')
   const fill = q('fill')
   const body = q('body')
 
-  if ([frame, wrap, img, hi, m1, m2, m3, band, veil, title, alto, stroke, fill, body].some(x => !x)) {
+  if ([frame, wrap, img, hi, m1, m2, m3, band, veil, core, title, alto, stroke, fill, body].some(x => !x)) {
     root.classList.add('inspection-ready')
     return () => {}
   }
@@ -96,8 +98,9 @@ export function startInspectionScan(gsap: Motion, ScrollTrigger: Motion, lenis: 
   const scanX = (p: number) => {
     if (!geo) return 0
     const money = geo.px(.65)
-    const start = -.14 * geo.vw
-    const end = 1.16 * geo.vw
+    // Start already grazing the left edge so the effect is immediately perceptible.
+    const start = .035 * geo.vw
+    const end = 1.08 * geo.vw
     if (p < .58) {
       const t = p / .58
       return start + (money - start) * (1 - Math.pow(1 - t, 1.6))
@@ -123,7 +126,7 @@ export function startInspectionScan(gsap: Motion, ScrollTrigger: Motion, lenis: 
   const render = (p: number) => {
     if (!geo) return
     const g = geo
-    const width = (mobile ? 34 : 15) / 100 * g.vw
+    const width = (mobile ? 36 : 18) / 100 * g.vw
     const half = width / 2
     const sx = scanX(p)
 
@@ -140,7 +143,10 @@ export function startInspectionScan(gsap: Motion, ScrollTrigger: Motion, lenis: 
     const bx = 'translate3d(' + (sx - half).toFixed(1) + 'px,0,0)'
     ;(band as HTMLElement).style.transform = bx
     ;(veil as HTMLElement).style.transform = bx
-    ;(band as HTMLElement).style.opacity = '.85'
+    ;(core as HTMLElement).style.transform = 'translate3d(' + sx.toFixed(1) + 'px,0,0)'
+    ;(band as HTMLElement).style.opacity = '.98'
+    ;(veil as HTMLElement).style.opacity = '.16'
+    ;(core as HTMLElement).style.opacity = p > .01 && p < .94 ? '.72' : '.35'
 
     const near = (f: number, spread: number) =>
       Math.exp(-Math.pow((sx - g.px(f)) / (half * spread), 2))
@@ -153,7 +159,7 @@ export function startInspectionScan(gsap: Motion, ScrollTrigger: Motion, lenis: 
     ;(fill as HTMLElement).style.webkitMaskImage = fillMask
     ;(fill as HTMLElement).style.maskImage = fillMask
 
-    const strokeA = .32 + .4 * smooth(clamp((sx - g.tl + half) / (g.vw * .5)))
+    const strokeA = .44 + .46 * smooth(clamp((sx - g.tl + half) / (g.vw * .5)))
     ;(stroke as HTMLElement).style.setProperty('--scan-stroke-alpha', strokeA.toFixed(3))
 
     const at = smooth(clamp((sx - (g.al - g.vw * .22)) / (g.vw * .24)))
@@ -161,7 +167,8 @@ export function startInspectionScan(gsap: Motion, ScrollTrigger: Motion, lenis: 
     ;(alto as HTMLElement).style.opacity = (.35 + .65 * at).toFixed(3)
 
     const bt = smooth(clamp((sx - (g.bl - g.vw * .15)) / (g.vw * .3)))
-    ;(body as HTMLElement).style.opacity = (.5 + .42 * bt).toFixed(3)
+    ;(body as HTMLElement).style.opacity = (.58 + .42 * bt).toFixed(3)
+    ;(root as HTMLElement).style.setProperty('--scan-x', sx.toFixed(1) + 'px')
   }
 
   const build = (isMobile: boolean, reduce: boolean) => {
